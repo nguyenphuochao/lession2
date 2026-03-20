@@ -16,10 +16,10 @@ const ProductItem = ({ products }) => {
 
                 <tbody>
                     {products.map((product, index) => (
-                        <tr>
+                        <tr key={product._id}>
                             <td>{ index + 1 }</td>
-                            <td>{ product.name }</td>
-                            <td>{ product.categoryName }</td>
+                            <td>{ product.productName }</td>
+                            <td>{ product.category.categoryName }</td>
                             <td>
                                 <img
                                     src="https://cdn.tgdd.vn/Products/Images/42/319665/samsung-galaxy-s24-256gb-5g-thumb-600x600.jpg"

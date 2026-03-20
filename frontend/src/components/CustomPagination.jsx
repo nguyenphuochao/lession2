@@ -1,14 +1,24 @@
 import Pagination from "react-bootstrap/Pagination";
 
-const CustomPagination = () => {
+const CustomPagination = ({ totalPages, currentPage, handleClickPage }) => {
+
+    const pageList = [];
+    for (let i = 1; i <= totalPages; i++) {
+        pageList.push(i)
+    }
+
     return (
         <div className="d-flex justify-content-center">
             <Pagination>
                 <Pagination.First disabled={true}>Previos</Pagination.First>
 
-                <Pagination.Item>1</Pagination.Item>
-                <Pagination.Item>2</Pagination.Item>
-                <Pagination.Item>3</Pagination.Item>
+                {
+                    pageList.map((page, index)=> (
+                        <Pagination.Item 
+                        onClick={() => handleClickPage(page)}
+                        active={currentPage === page}>{ page }</Pagination.Item>
+                    ))
+                }
 
                 <Pagination.Last>Next</Pagination.Last>
             </Pagination>

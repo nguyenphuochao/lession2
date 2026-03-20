@@ -2,16 +2,30 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useForm } from "react-hook-form";
+import { toast } from 'react-toastify';
+import axios from "axios";
+import { api } from "../lib/axios";
 
-const ModalAddProduct = ({ showModalAddProduct, handleCloseModal }) => {
+const ModalAddProduct = ({ showModalAddProduct, handleCloseModal, handleFetchProducts, setPage }) => {
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm();
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data) => {
+        try {
+            await api.post("/products", data);
+            toast.success(`Đã thêm mới sản phẩm ${data.name}`)
+            handleCloseModal();
+            reset();
+            handleFetchProducts();
+            setPage(1);
+        } catch (error) {
+            console.log(error);
+            toast.error("Có lỗi xảy ra", error)
+        }
     };
 
     return (
@@ -39,14 +53,15 @@ const ModalAddProduct = ({ showModalAddProduct, handleCloseModal }) => {
                         <Form.Group className="mb-3">
                             <Form.Label>Category</Form.Label>
                             <Form.Select
-                                {...register("category", { required: true })}
+                                {...register("categoryId", { required: true })}
                             >
                                 <option value="">Please select menu</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
+                                <option value="1">Samsung</option>
+                                <option value="2">Nokia</option>
+                                <option value="3">OPPO</option>
+                                <option value="3">Iphone</option>
                             </Form.Select>
-                            {errors.category && (
+                            {errors.categoryId && (
                                 <p className="text-danger">
                                     Category is required.
                                 </p>
