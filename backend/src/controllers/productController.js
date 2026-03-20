@@ -1,4 +1,5 @@
 import Product from "../models/Product.js";
+import { formattedProduct } from "../utils/productHelper.js";
 
 export const getProducts = async (req, res) => {
     try {
@@ -12,7 +13,7 @@ export const getProducts = async (req, res) => {
         if (searchTerm) {
             query = {
                 $or: [
-                    { name: new RegExp(searchTerm, "i") },
+                    { productName: new RegExp(searchTerm, "i") },
                     { categoryName: new RegExp(searchTerm, "i") },
                 ],
             };
@@ -30,15 +31,7 @@ export const getProducts = async (req, res) => {
 
         const totalPages = Math.ceil(total / limit);
 
-        const formatted = products.map(product => ({
-            _id: product._id,
-            productName: product.productName,
-            category: {
-                _id: product.categoryId._id,
-                categoryName: product.categoryId.categoryName
-            },
-            productImage: product.productImage
-        }))
+        const formatted = products.map((product) => formattedProduct(product));
 
         return res.status(200).json({
             products: formatted,
@@ -58,7 +51,7 @@ export const createProduct = async (req, res) => {
         if (!productName || !categoryId) {
             return res
                 .status(400)
-                .json({ message: "Vui lòng nhập name, categoryId" });
+                .json({ message: "Please enter productName, categoryId" });
         }
 
         const product = await Product.create({
@@ -70,5 +63,26 @@ export const createProduct = async (req, res) => {
         return res.status(201).json(product);
     } catch (error) {
         console.log("Error server when call createProduct", error);
+    }
+};
+
+export const detailProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findById(productId).populate(
+            "categoryId",
+            "categoryName",
+        );
+
+        if (!product) {
+            return res
+                .status(404)
+                .json({ message: `Product not found ID=${productId}` });
+        }
+
+        return res.status(200).json(formattedProduct(product));
+    } catch (error) {
+        console.log("Error server when call detailProduct", error);
+        return res.status(500).json({ message: "Error server" });
     }
 };

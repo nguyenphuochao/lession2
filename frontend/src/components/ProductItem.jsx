@@ -1,4 +1,5 @@
 import Table from "react-bootstrap/Table";
+import ProductCard from "./ProductCard";
 
 const ProductItem = ({ products }) => {
     return (
@@ -15,26 +16,18 @@ const ProductItem = ({ products }) => {
                 </thead>
 
                 <tbody>
-                    {products.map((product, index) => (
-                        <tr key={product._id}>
-                            <td>{ index + 1 }</td>
-                            <td>{ product.productName }</td>
-                            <td>{ product.category.categoryName }</td>
-                            <td>
-                                <img
-                                    src="https://cdn.tgdd.vn/Products/Images/42/319665/samsung-galaxy-s24-256gb-5g-thumb-600x600.jpg"
-                                    width="50"
-                                    alt=""
-                                />
-                            </td>
-                            <td>
-                                <i className="custom-font-awesome fa-solid fa-pen-to-square"></i>
-                                <i className="custom-font-awesome fa-solid fa-circle-minus"></i>
-                                <i className="custom-font-awesome fa-regular fa-clipboard"></i>
-                                <i className="custom-font-awesome fa-solid fa-eye"></i>
-                            </td>
+                    {/* have products */}
+                    {products.length > 0 &&
+                        products.map((product, index) => (
+                            <ProductCard product={product} index={index} />
+                        ))}
+
+                    {/* no data product */}
+                    {products.length === 0 && (
+                        <tr>
+                            <td colSpan={5}>No data product</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </Table>
         </div>

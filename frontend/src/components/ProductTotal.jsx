@@ -1,9 +1,14 @@
 import React from "react";
 
-const ProductTotal = () => {
+const ProductTotal = ({ search, products }) => {
+
+    if(!search) {
+        return;
+    }
+
     return (
         <div>
-            Search found <span className="fw-bold">15</span> results
+            Search found <span className="fw-bold">{products.length}</span> results
         </div>
     );
 };

@@ -2,6 +2,8 @@ import Pagination from "react-bootstrap/Pagination";
 
 const CustomPagination = ({ totalPages, currentPage, handleClickPage }) => {
 
+    if(totalPages === 0) return;
+
     const pageList = [];
     for (let i = 1; i <= totalPages; i++) {
         pageList.push(i)

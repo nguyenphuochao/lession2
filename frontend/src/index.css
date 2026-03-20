@@ -16,6 +16,10 @@
     cursor: pointer;
 }
 
+.search-input::placeholder {
+    text-align: center;
+}
+
 th, td {
     text-align: center !important;
     vertical-align: middle;

@@ -1,24 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 
-const Search = ({ search, setSearch, handleFetchProducts }) => {
+const Search = ({ search, handleSubmitSearch }) => {
 
-    const handleKeyPress= (e) => {
-        if(e.key === "Enter") {
-            handleFetchProducts();
-        }
-    }
+    const [patern, setPatern] = useState(search);
 
     return (
-        <div className="mt-4">
+        <form onSubmit={(e) => handleSubmitSearch(e, patern)} className="mt-4">
             <input
-                onChange={(e) => setSearch(e.target.value)}
-                value={search}
+                onChange={(e) => setPatern(e.target.value)}
+                value={patern}
                 type="text"
-                placeholder="Search"
-                className="w-100 border border-5"
-                onKeyPress={handleKeyPress}
+                placeholder="🔍︎Search"
+                className="w-100 border border-5 p-2 search-input"
             />
-        </div>
+        </form>
     );
 };
 

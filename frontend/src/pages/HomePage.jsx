@@ -37,18 +37,23 @@ const HomePage = () => {
         setPage(page);
     }
 
+    const handleSubmitSearch = (e, patern) => {
+        e.preventDefault();
+        setSearch(patern)
+    }
+
     useEffect(() => {
         getProducts();
-    }, [page]);
+    }, [search, page]);
 
     return (
         <div className="container mt-5">
             <Header />
 
-            <Search search={search} setSearch={setSearch} handleFetchProducts={handleFetchProducts}/>
+            <Search search={search} handleSubmitSearch={handleSubmitSearch} />
 
-            <div className="d-flex justify-content-between align-items-center mt-4">
-                <ProductTotal />
+            <div className={`d-flex ${search ? 'justify-content-between' : 'justify-content-end' } align-items-center mt-4`}>
+                <ProductTotal search={search} products={products} />
                 <div className="product-add">
                     <span
                         onClick={() => setShowAddProduct(true)}
