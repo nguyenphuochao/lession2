@@ -86,3 +86,83 @@ export const detailProduct = async (req, res) => {
         return res.status(500).json({ message: "Error server" });
     }
 };
+
+export const updateProduct = async (req, res) => {
+    try {
+        const { productName, categoryId, productImage } = req.body;
+
+        if (!productName || !categoryId) {
+            return res
+                .status(400)
+                .json({ message: "Please enter productName, categoryId" });
+        }
+
+        const productId = req.params.id;
+        const product = await Product.findByIdAndUpdate(
+            productId,
+            {
+                productName,
+                categoryId,
+                productImage,
+            },
+            {
+                new: true,
+            },
+        );
+
+        if (!product) {
+            return res
+                .status(404)
+                .json({ message: "Product not found ID=" + productId });
+        }
+
+        return res.status(200).json(product);
+    } catch (error) {
+        console.log("Server error when call updateProduct:", error);
+        return res.status(500).json({ message: "Error server" });
+    }
+};
+
+export const deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findByIdAndDelete(productId);
+
+        if (!product) {
+            return res
+                .status(404)
+                .json({ message: "Product not found ID=" + productId });
+        }
+
+        return res.sendStatus(204);
+    } catch (error) {
+        console.log("Error server when call deleteProduct:", error);
+        return res.status(500).json({ message: "Error server" });
+    }
+};
+
+export const uploadProduct = async (req, res) => {
+    try {
+        const file = req.file;
+        const productId = req.params.id;
+
+        const fullUrl = req.protocol + "://" + req.get("host") + "/";
+        if (!file) {
+            return res.status(400).json({ error: "No file provided" });
+        }
+
+        const product = await Product.findByIdAndUpdate(productId, {
+            productImage: req.file.filename,
+        });
+
+        if(!product) {
+            return res
+                .status(404)
+                .json({ message: "Product not found ID=" + productId });
+        }
+
+        return res.status(200).json({ filename: fullUrl + req.file.filename });
+    } catch (error) {
+        console.log(error);
+    }
+};

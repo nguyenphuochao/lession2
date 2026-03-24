@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 
 const ModalAddProduct = ({ showModalAddProduct, handleCloseModal, handleFetchProducts, setPage }) => {
     const [categories, setCategories] = useState([]);
+    const [file, setFile] = useState(null);
     const {
         register,
         handleSubmit,
@@ -44,6 +45,10 @@ const ModalAddProduct = ({ showModalAddProduct, handleCloseModal, handleFetchPro
             toast.error("Error server when call createProduct", error)
         }
     };
+
+    const handleUpload = (e) => {
+        setFile(e.target.files[0]);
+    }
 
     return (
         <>
@@ -88,7 +93,7 @@ const ModalAddProduct = ({ showModalAddProduct, handleCloseModal, handleFetchPro
 
                         <Form.Group className="mb-3">
                             <Form.Label>Image</Form.Label>
-                            <Form.Control type="file" />
+                            <Form.Control onChange={handleUpload} type="file" />
                         </Form.Group>
                     </Modal.Body>
 

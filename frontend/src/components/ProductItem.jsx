@@ -1,7 +1,7 @@
 import Table from "react-bootstrap/Table";
 import ProductCard from "./ProductCard";
 
-const ProductItem = ({ products }) => {
+const ProductItem = ({ products, handleFetchProducts }) => {
     return (
         <div className="mt-3">
             <Table bordered hover>
@@ -19,7 +19,7 @@ const ProductItem = ({ products }) => {
                     {/* have products */}
                     {products.length > 0 &&
                         products.map((product, index) => (
-                            <ProductCard product={product} index={index} />
+                            <ProductCard product={product} index={index} handleFetchProducts={handleFetchProducts} />
                         ))}
 
                     {/* no data product */}

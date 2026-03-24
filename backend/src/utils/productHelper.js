@@ -6,7 +6,7 @@ export const formattedProduct = (product) => {
             _id: product.categoryId._id,
             categoryName: product.categoryId.categoryName,
         },
-        productImage: product.productImage,
+        productImage: product.productImage ? process.env.SERVER_URL + "/" + product.productImage : "",
         createdAt: product.createdAt,
         updatedAt: product.updatedAt,
     };
