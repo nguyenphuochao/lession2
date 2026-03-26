@@ -8,14 +8,14 @@ import Search from "../components/Search";
 import ModalAddProduct from "../components/ModalAddProduct";
 import { api } from "../lib/axios";
 import { toast } from "react-toastify";
+import Footer from "../components/Footer";
 
 const HomePage = () => {
     const [products, setProducts] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState("");
-    const [showModalAddProduct, setShowAddProduct] = useState(false);
-    const handleCloseModal = () => setShowAddProduct(false);
+    const [showModalAddProduct, setShowModalAddProduct] = useState(false);
 
     const getProducts = async () => {
         try {
@@ -72,7 +72,7 @@ const HomePage = () => {
                 <ProductTotal search={search} products={products} />
                 <div className="product-add">
                     <span
-                        onClick={() => setShowAddProduct(true)}
+                        onClick={() => setShowModalAddProduct(true)}
                         className="fs-3"
                     >
                         <i class="fa-solid fa-plus"></i>
@@ -92,10 +92,12 @@ const HomePage = () => {
 
             <ModalAddProduct
                 showModalAddProduct={showModalAddProduct}
-                handleCloseModal={handleCloseModal}
+                setShowModalAddProduct={setShowModalAddProduct}
                 handleFetchProducts={handleFetchProducts}
                 setPage={setPage}
             />
+
+            <Footer />
         </div>
     );
 };

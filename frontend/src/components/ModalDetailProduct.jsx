@@ -11,20 +11,25 @@ const ModalDetailProduct = ({
     handleCloseModal,
     productId,
 }) => {
+    const [loading, setLoading] = useState(false);
+    console.log(productId);
     const [product, setProduct] = useState([]);
     const fetchProduct = async () => {
         try {
+            setLoading(true);
             const res = await api.get("/products/" + productId);
             setProduct(res.data);
         } catch (error) {
             console.log("Error server call fetchProduct", error);
             toast.error("Error server call fetchProduct");
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchProduct();
-    }, []);
+    }, [productId]);
 
     return (
         <>
@@ -34,24 +39,43 @@ const ModalDetailProduct = ({
                         <Modal.Title>Detail product</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <Form.Group className="mb-3">
-                            <Form.Label htmlFor="inputProductName">
-                                Product name
-                            </Form.Label>
-                            <div className="fw-bold">{product?.productName}</div>
-                        </Form.Group>
+                        {loading ? (
+                            <p>Loading...</p>
+                        ) : (
+                            <div>
+                                <Form.Group className="mb-3">
+                                    <Form.Label htmlFor="inputProductName">
+                                        Product name
+                                    </Form.Label>
+                                    <div className="fw-bold">
+                                        {product?.productName}
+                                    </div>
+                                </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Category</Form.Label>
-                            <div className="fw-bold">
-                                {product?.category?.categoryName}
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Category</Form.Label>
+                                    <div className="fw-bold">
+                                        {product?.category?.categoryName}
+                                    </div>
+                                </Form.Group>
+
+                                <Form.Group className="mb-3">
+                                    {product?.productImage ? (
+                                        <img
+                                            src={product?.productImage}
+                                            width="200"
+                                            alt=""
+                                        />
+                                    ) : (
+                                        <img
+                                            src="/noimage.jpg"
+                                            width="200"
+                                            alt=""
+                                        />
+                                    )}
+                                </Form.Group>
                             </div>
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Image</Form.Label>
-                            <Form.Control type="file" />
-                        </Form.Group>
+                        )}
                     </Modal.Body>
                 </form>
             </Modal>

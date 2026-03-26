@@ -155,7 +155,7 @@ export const uploadProduct = async (req, res) => {
             productImage: req.file.filename,
         });
 
-        if(!product) {
+        if (!product) {
             return res
                 .status(404)
                 .json({ message: "Product not found ID=" + productId });
@@ -164,5 +164,31 @@ export const uploadProduct = async (req, res) => {
         return res.status(200).json({ filename: fullUrl + req.file.filename });
     } catch (error) {
         console.log(error);
+    }
+};
+
+export const copyProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res
+                .status(404)
+                .json({ message: "Product not found ID=" + productId });
+        }
+
+        const newProduct = await Product.create({
+            productName: product.productName,
+            categoryId: product.categoryId,
+            productImage: product.productImage,
+        });
+
+        const copyProduct = await Product.findById(newProduct._id).populate("categoryId","categoryName");
+
+        return res.status(201).json(formattedProduct(copyProduct));
+    } catch (error) {
+        console.log("Server error when call copyProduct", error);
+        return res.status(500).json({ message: "Error server" });
     }
 };

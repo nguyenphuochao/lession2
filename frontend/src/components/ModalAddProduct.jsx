@@ -2,13 +2,20 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useForm } from "react-hook-form";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { api } from "../lib/axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const ModalAddProduct = ({ showModalAddProduct, handleCloseModal, handleFetchProducts, setPage }) => {
+const ModalAddProduct = ({
+    showModalAddProduct,
+    setShowModalAddProduct,
+    handleFetchProducts,
+    setPage,
+}) => {
     const [categories, setCategories] = useState([]);
     const [file, setFile] = useState(null);
+    const [previewImage, setPreviewImage] = useState(null);
+    const inputRef = useRef();
     const {
         register,
         handleSubmit,
@@ -22,33 +29,64 @@ const ModalAddProduct = ({ showModalAddProduct, handleCloseModal, handleFetchPro
             setCategories(res.data);
         } catch (error) {
             console.log("Error server call fetchCategories", error);
-            toast.error("Error server call fetchCategories")
+            toast.error("Error server call fetchCategories");
         }
-    }
+    };
 
     useEffect(() => {
-        if(showModalAddProduct) {
+        if (showModalAddProduct) {
             fetchCategories();
         }
     }, [showModalAddProduct]);
 
     const onSubmit = async (data) => {
         try {
-            await api.post("/products", data);
-            toast.success(`Đã thêm mới sản phẩm ${data.productName}`)
+            // create new product
+            const productResponse = await api.post("/products", data);
+            // use formData handle upload file
+            const formData = new FormData();
+            formData.append("file", file);
+            await api.post(
+                `/products/${productResponse.data._id}/upload`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                },
+            );
+
+            // OK
+            toast.success(`Đã thêm mới sản phẩm ${data.productName}`);
             handleCloseModal();
-            reset();
+            resetForm();
             handleFetchProducts();
-            setPage(1);
         } catch (error) {
             console.log(error);
-            toast.error("Error server when call createProduct", error)
+            toast.error("Error server when call createProduct", error);
         }
     };
 
-    const handleUpload = (e) => {
+    const handleChangeImage = (e) => {
         setFile(e.target.files[0]);
+        setPreviewImage(URL.createObjectURL(e.target.files[0]));
+    };
+
+    const handleRemoveImage = () => {
+        setFile(null);
+        setPreviewImage(null);
+        inputRef.current.value = "";
+    };
+
+    const handleCloseModal = () => {
+        setShowModalAddProduct(false);
+        resetForm();
     }
+
+    const resetForm = () => {
+        reset();
+        handleRemoveImage();
+    };
 
     return (
         <>
@@ -78,11 +116,14 @@ const ModalAddProduct = ({ showModalAddProduct, handleCloseModal, handleFetchPro
                                 {...register("categoryId", { required: true })}
                             >
                                 <option value="">Please select menu</option>
-                                {
-                                    categories.map((category) => (
-                                        <option key={category._id} value={category._id}>{category.categoryName}</option>
-                                    ))
-                                }
+                                {categories.map((category) => (
+                                    <option
+                                        key={category._id}
+                                        value={category._id}
+                                    >
+                                        {category.categoryName}
+                                    </option>
+                                ))}
                             </Form.Select>
                             {errors.categoryId && (
                                 <p className="text-danger">
@@ -93,7 +134,24 @@ const ModalAddProduct = ({ showModalAddProduct, handleCloseModal, handleFetchPro
 
                         <Form.Group className="mb-3">
                             <Form.Label>Image</Form.Label>
-                            <Form.Control onChange={handleUpload} type="file" />
+                            <Form.Control
+                                ref={inputRef}
+                                onChange={handleChangeImage}
+                                type="file"
+                            />
+                            {previewImage && (
+                                <div className="d-flex align-items-center gap-3">
+                                    <img
+                                        className="mt-2"
+                                        src={previewImage}
+                                        alt="preview image"
+                                        width={100}
+                                    />
+                                    <button onClick={handleRemoveImage}>
+                                        X
+                                    </button>
+                                </div>
+                            )}
                         </Form.Group>
                     </Modal.Body>
 

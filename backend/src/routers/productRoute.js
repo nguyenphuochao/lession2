@@ -1,4 +1,5 @@
 import {
+    copyProduct,
     createProduct,
     deleteProduct,
     detailProduct,
@@ -22,5 +23,7 @@ router.put("/:id", updateProduct);
 router.delete("/:id", deleteProduct);
 
 router.post("/:id/upload", upload.single("file"), uploadProduct);
+
+router.post("/:id/copy", copyProduct);
 
 export default router;
